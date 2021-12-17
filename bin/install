@@ -1,0 +1,1 @@
+deno install -f --allow-read --allow-write --unstable --name junk-drawer mod.ts
