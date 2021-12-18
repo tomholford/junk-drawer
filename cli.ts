@@ -1,4 +1,3 @@
-
 import { Denomander } from './deps.ts';
 import { sort } from "./sort.ts";
 
@@ -14,6 +13,7 @@ export const main = () => {
   program
     .command('sort', 'puts junk away')
     .option('-p --path', 'path', identity, './')
-    .action(() => { sort({ path: program.path }) })
+    .option('-d --dry', 'dry run', identity, false)
+    .action(() => { sort({ path: program.path, dry: program.dry }) })
     .parse(Deno.args)  
 }
