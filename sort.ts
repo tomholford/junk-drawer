@@ -1,20 +1,37 @@
 interface sortArgs {
-  path: string,
-  dry: boolean,
+  inputPath: string;
+  outputPath: string;
+  dry: boolean;
 }
 
 import { ensureDir, join } from "./deps.ts";
 import { asyncForEach } from "./lib/async_for_each.ts";
 import { fileExtension } from './lib/file.ts';
 
-export const sort = async ({ path, dry = false }: sortArgs) => {
-  console.log(`sorting ${path} ...`);
+export const sort = async ({ inputPath, outputPath, dry = false }: sortArgs) => {
+  try {
+    const inputStat = await Deno.stat(inputPath);
+    if(!inputStat.isDirectory) {
+      console.log(`${inputPath} is not a valid directory :(`);
+      return;
+    }    
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      console.log(`${inputPath} not found :(`);
+      return;
+    } else {
+      // unexpected error, maybe permissions, pass it along
+      throw error;
+    }
+  }
+
+  console.log(`sorting ${inputPath} ...`);
 
   // Build file map
   let numEntries = 0;
   const fileMap: Record<string, Deno.DirEntry[]> = {};
 
-  for await (const dirEntry of Deno.readDir(path)) {
+  for await (const dirEntry of Deno.readDir(inputPath)) {
     numEntries += 1;
     if(dirEntry.isFile) {
       const extension = fileExtension(dirEntry.name);
@@ -47,8 +64,8 @@ export const sort = async ({ path, dry = false }: sortArgs) => {
 
   await asyncForEach(filetypes, async (type) => {
     await asyncForEach(fileMap[type], async (file) => {
-      const oldPath = join(path, file.name);
-      const newDir = join(path, type);
+      const oldPath = join(inputPath, file.name);
+      const newDir = join(outputPath, type);
       const newPath = join(newDir, file.name);
       if (dry) {
         console.log(`[dry run] would move ${oldPath} --> ${newPath}`)

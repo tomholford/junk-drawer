@@ -1,7 +1,7 @@
 import { Denomander } from './deps.ts';
 import { sort } from "./sort.ts";
 
-const identity = (v: unknown) => v;
+const identity = (v: string) => v;
 
 const program = new Denomander({
   app_name: "junk drawer",
@@ -12,8 +12,9 @@ const program = new Denomander({
 export const main = () => {
   program
     .command('sort', 'puts junk away')
-    .option('-p --path', 'path', identity, './')
+    .option('-i --input', 'input directory', identity, './')
+    .option('-o --output', 'output directory', identity, './')
     .option('-d --dry', 'dry run', identity, false)
-    .action(() => { sort({ path: program.path, dry: program.dry }) })
+    .action(() => { sort({ inputPath: program.input, outputPath: program.output, dry: program.dry }) })
     .parse(Deno.args)  
 }

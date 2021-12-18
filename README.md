@@ -13,16 +13,16 @@ Select a directory and the files will automatically be sorted into relevant dire
 
 ## Usage
 
-- `-p [path]` - *(optional)* the path of the directory to organize; defaults to `./`
+- `-i /path/to/input` - *(optional)* the path of the directory to organize; defaults to `./`
+- `-o /path/to/output` - *(optional)* the path of the directory to move the organized files to; defaults to `./`
 - `-d` - *(optional)* dry run mode; shows a preview of move operations. defaults to off 
-
 
 ## Install
 1. Clone this repo
 1. Run `bin/install`
 1. Organize a folder
 ```sh
-junk-drawer -d -p ~/Downloads
+junk-drawer -d -i ~/Downloads
 ```
 
 ## Roadmap
