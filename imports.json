@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "denomander": "https://deno.land/x/denomander@0.9.1/mod.ts",
+    "fs": "https://deno.land/std@0.118.0/fs/mod.ts",
+    "path": "https://deno.land/std@0.118.0/path/mod.ts"
+  }
+}
