@@ -6,7 +6,7 @@ interface sortArgs {
 
 import { ensureDir, join } from "./deps.ts";
 import { asyncForEach } from "./lib/async_for_each.ts";
-import { fileExtension } from './lib/file.ts';
+import { exists, fileExtension } from './lib/file.ts';
 
 export const sort = async ({ inputPath, outputPath, dry = false }: sortArgs) => {
   try {
@@ -66,12 +66,19 @@ export const sort = async ({ inputPath, outputPath, dry = false }: sortArgs) => 
     await asyncForEach(fileMap[type], async (file) => {
       const oldPath = join(inputPath, file.name);
       const newDir = join(outputPath, type);
-      const newPath = join(newDir, file.name);
+      let newPath = join(newDir, file.name);
+      const pathExists = await exists(newPath);
+      if (pathExists) {
+        console.log(`${newPath} already exists ...`);
+        newPath = join(newDir, `${Date.now()}_${file.name}`);
+        console.log(`will move as ${newPath} to avoid overwrite`);
+      }
+
       if (dry) {
         console.log(`[dry run] would move ${oldPath} --> ${newPath}`)
       } else {
-        console.log(`moving ${oldPath} --> ${newPath} ...`);
         await ensureDir(newDir);
+        console.log(`moving ${oldPath} --> ${newPath} ...`);
         await Deno.rename(oldPath, newPath);
       }
     })

@@ -5,7 +5,7 @@
 Got a folder like this? Tidy it up with `junk-drawer`
 
 
-Select a directory and the files will automatically be sorted into relevant directories
+Select a directory and the files will automatically be sorted into relevant directories, arranged by filetype.
 
 ## Prerequisites
 
@@ -23,6 +23,18 @@ Select a directory and the files will automatically be sorted into relevant dire
 1. Organize a folder
 ```sh
 junk-drawer -d -i ~/Downloads
+```
+
+## Example
+```
+$ junk-drawer sort -d -i ./test -o ./other
+sorting ./test ...
+found 1 files [txt] out of 1 total paths
+moving files ...
+other/txt/lol.txt already exists ...
+will move as other/txt/1639871946323_lol.txt to avoid overwrite
+[dry run] would move test/lol.txt --> other/txt/1639871946323_lol.txt
+done :)
 ```
 
 ## Roadmap

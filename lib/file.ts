@@ -3,3 +3,12 @@ export const fileExtension = (filename: string) => {
 
   return ext;
 }
+
+export const exists = async (path: string) => {
+  try {
+    const stat = await Deno.stat(path);
+    return stat.isFile || stat.isDirectory;
+  } catch (_error) {
+    return false;
+  }
+}
