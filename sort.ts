@@ -4,9 +4,10 @@ interface sortArgs {
   dry: boolean;
 }
 
+import { IGNORED_EXTENSIONS } from "./constants.ts";
 import { ensureDir, join } from "./deps.ts";
 import { asyncForEach } from "./lib/async_for_each.ts";
-import { exists, fileExtension } from './lib/file.ts';
+import { exists, fileExtension, hasExtension, isHidden } from './lib/file.ts';
 
 export const sort = async ({ inputPath, outputPath, dry = false }: sortArgs) => {
   try {
@@ -34,9 +35,29 @@ export const sort = async ({ inputPath, outputPath, dry = false }: sortArgs) => 
   for await (const dirEntry of Deno.readDir(inputPath)) {
     numEntries += 1;
     if(dirEntry.isFile) {
-      const extension = fileExtension(dirEntry.name);
+      const filename = dirEntry.name;
+
+      // ignore hidden files
+      if(isHidden(filename)) {
+        console.log(`hidden files are ignored, skipping ${filename}`);
+        continue;
+      }
+
+      // ignore files without extension
+      if(!hasExtension(filename)) {
+        console.log(`files without extension are ignored, skipping ${filename}`);
+        continue;
+      }
+
+      // ignore files with blacklisted extensions
+      const extension = fileExtension(filename);
+      if(IGNORED_EXTENSIONS.includes(extension)) {
+        console.log(`${extension} files are ignored, skipping`);
+        continue;
+      }
+
       if(!extension) {
-        console.log(`no extension for ${dirEntry.name}, skipping`);
+        console.log(`no extension for ${filename}, skipping`);
         continue;
       }
       if(extension in fileMap) {
